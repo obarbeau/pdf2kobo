@@ -1,0 +1,15 @@
+= pdf2kobo: Convert your PDFs for easy reading on Kobo
+
+description succinte
+
+== Introduction
+
+== Current Status
+
+== Current Limitations
+
+== Setup
+
+== Configuration
+
+== Usage
