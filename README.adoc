@@ -1,6 +1,7 @@
+[float]
 = pdf2kobo: Convert your PDFs for easy reading on Kobo
 
-description succinte
+The Kobo is a sublime e-reader
 
 == Introduction
 
