@@ -1,0 +1,98 @@
+== pdf2kobo
+
+=== En bref
+
+*Conversion de vos PDF pour une lecture agréable sur Kobo (et liseuses
+équivalentes)*
+
+Ce script shell automatise les étapes de conversion de fichier pour que les
+documents PDF au format `A4 portrait' soit lisibles en mode paysage sans aucun
+ajustement sur la liseuse.
+Et ce quelle que soit l'origine du document: livre ou impression web.
+
+=== Introduction
+
+==== Motivation
+
+Les liseuses proposent toutes une qualité de lecture fantastique par rapport aux
+écrans classiques des ordinateurs et tablettes.
+Le Kobo, surtout dans sa version HD rétro-éclairé ne faillit pas à cette règle.
+
+Cependant, lorsqu'il est question de lire convenablement un fichier PDF au
+format A4 portrait, même les grands écrans (généralement 7 pouces) ne suffisent
+pas, et il est alors nécessaire de double taper pour zoomer, scroller vers le
+haut ou le bas de la page, dé-zoomer pour changer de page...
+
+Même la rotation du document au format paysage ne résout pas totalement le
+problème puisqu'il faudra quand même zoomer et glisser. Bref ces manipulations
+pénibles gâchent tout le plaisir d'avoir sa bibliothèque dans sa poche.
+
+==== Solution
+
+Pourquoi ne pas préparer ses PDFs à une lecture agréable *avant* de les
+transférer sur l'appareil?
+
+Le script shell proposé ici effectue les opérations suivantes:
+
+. crée deux fichiers avec pour l'un la partie haute d'une page et pour le second
+  la partie basse.
+. assemble ces deux fichiers en un seul. On a alors le double de pages par
+  rapport à l'original, cela équivaudra à un `zoom' 200%.
+. pour maximiser encore la zone d'affichage, supprime les marges.
+. enfin tourne les pages de -90° (a) pour être en mode `paysage' permanent.
+
+(a): Sur le Kobo il n'est pas possible de changer les zones d'action pour
+tourner les pages.
+Cette rotation anti-horaire permet d'avancer dans le document en cliquant en bas
+de l'écran, ce qui me semble plus logique.
+
+Toutes ces transformations sont réalisées par les outils suivants:
+
+* `pdftocairo` (séparation haut/bas)
+* `pdftk` (assemblage des moitiés et rotation)
+* `briss` (suppression des marges)
+
+A noter que lorsque les pages sont coupées en deux, un léger chevauchement est
+prévu. Cela permettra à une ligne de texte coupée en son milieu d'être répétée
+en entier dans l'autre partie de la page.
+
+=== Installation
+
+==== Script principal
+
+    $ wget -O pdf2kobo https://raw.github.com/obarbeau/pdf2kobo/master/pdf2kobo.sh
+    $ chmod +x pdf2kobo
+    $ sudo mv pdf2kobo /usr/local/bin
+
+==== Outils externes
+
+Pour installer les outils listés ci-dessus, lancer la commande (sous Fedora):
+
+    yum install poppler-utils pdftk
+
+Pour briss, suivre la procédure sur http://briss.sourceforge.net/, puis
+positionner la variable `BRISS_HOME` du script principal sur le répertoire
+choisi pour l'installation.
+
+=== Utilisation
+
+    pdf2kobo file-to-convert
+
+=== Améliorations
+
+* Envoyer directement le résultat vers le Kobo s'il est monté sous linux.
+* Accepter également les fichiers `.odt`, en les convertissant au préalable en
+  PDF.
+
+=== Known bugs
+
+* Sur le Kobo le texte peut être légèrement coupé à gauche si la marge est très
+  petite.
+* un problème de mise en page peut survenir avec les livres ayant une `4ème de
+  couv'. Dans ce cas il faut imprimer le document original `dans un fichier',
+  avec le format A4, puis utiliser le script.
+
+=== Licence
+
+Ce script est distribué sous licence GPL v3. Voir le fichier LICENSE pour tous
+les détails.

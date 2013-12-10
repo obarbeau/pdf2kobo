@@ -1,16 +1,90 @@
-[float]
-= pdf2kobo: Convert your PDFs for easy reading on Kobo
+== pdf2kobo
 
-The Kobo is a sublime e-reader
+=== Overview
 
-== Introduction
+*Convert your PDFs for easy reading on Kobo (and e-readers counterparts)*
 
-== Current Status
+This shell script automates the steps needed for converting PDF files, thus any
+document originally in A4 portrait will be readable in landscape mode, without
+any adjustment on the e-reader.
+And regardless of the origin of the document: ebook or web printing.
 
-== Current Limitations
+=== Introduction
 
-== Setup
+==== Motivation
 
-== Configuration
+E-readers all offer a fantastic quality of reading compared to conventional
+computer screens and tablets.
+The Kobo, especially in its backlit HD version does not broke this rule.
 
-== Usage
+However, when it comes to properly read a PDF file in A4 portrait, even large
+screens (typically 7 inches) are not enough, and it is necessary to double tap
+to zoom, scroll up or down the page, zoom out to change the page...
+
+Even the rotation of the document in landscape format does not completely solve
+the problem since one will still have to zoom and drag. In short these hassles
+spoil all the fun of having one's library into his pocket.
+
+==== Solution
+
+Why not prepare their PDFs to enjoy reading *before* the transfer on the device?
+
+This proposed shell script does the following:
+
+. creates two files. One with the upper part of a page and the other for the
+  lower part.
+. assembles these two files into one. We then have double number of pages
+  compared to the original, this will be equivalent to a 200% zoom.
+. to further maximize the display area, deletes margins.
+. finally turns the pages of -90° (a) to be in `landscape' mode.
+
+(a) On the Kobo it is not possible to change the `action areas' to turn pages.
+This counterclockwise rotation allows to move forward in the document by
+clicking on the bottom of the screen, which seems more logical.
+
+All these transformations are performed by the following tools:
+
+* pdftocairo (up/down separation)
+* pdftk (assembly of halves and rotation)
+* briss (removal of margins)
+
+Note that when the pages are cut in half, a slight overlap is expected.
+This will allow a line of text which has been cut in the middle to be repeated
+in the lower part of the page.
+
+=== Installation
+
+==== Main script
+
+    $ wget -O pdf2kobo https://raw.github.com/obarbeau/pdf2kobo/master/pdf2kobo.sh
+    $ chmod +x pdf2kobo
+    $ sudo mv pdf2kobo /usr/local/bin
+
+==== External tools
+
+To install the tools listed above, run the following command (Fedora):
+
+    yum install poppler-utils pdftk
+
+For `Briss`, please follow the procedure on http://briss.sourceforge.net/ and
+set the `BRISS_HOME` variable in the main script on the directory choosen for
+installation.
+
+=== Usage
+
+    pdf2kobo file-to-convert
+
+=== Next steps
+
+* Send the result directly to the Kobo if mounted under linux.
+* Also accept `.odt` files, converting them to PDF first.
+
+=== Known bugs
+
+* If the final margin is very small, the text can be slightly cut on the left.
+* ebooks with back covers might be problematic. In this case you must print the
+  original document `in a file', with a standard A4 format, then use the script.
+
+=== Licensing
+
+This script is distributed under GPL v3. See LICENSE for details.
