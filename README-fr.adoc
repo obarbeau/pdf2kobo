@@ -6,9 +6,9 @@
 équivalentes)*
 
 Ce script shell automatise les étapes de conversion de fichier pour que les
-documents PDF au format `A4 portrait' soit lisibles en mode paysage sans aucun
-ajustement sur la liseuse.
-Et ce quelle que soit l'origine du document: livre ou impression web.
+documents PDF au format `A4 portrait' ou ebooks à la mise en page mal adaptée
+soient lisibles en mode paysage et sans aucun ajustement sur la liseuse.
+
 
 === Introduction
 

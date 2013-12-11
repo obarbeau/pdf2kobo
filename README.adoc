@@ -5,8 +5,8 @@
 *Convert your PDFs for easy reading on Kobo (and e-readers counterparts)*
 
 This shell script automates the steps needed for converting PDF files, thus any
-document originally in A4 portrait will be readable in landscape mode, without
-any adjustment on the e-reader.
+document originally in A4 portrait (or with maladjusted layout) will be readable
+in landscape mode, without any adjustment on the e-reader.
 And regardless of the origin of the document: ebook or web printing.
 
 === Introduction
