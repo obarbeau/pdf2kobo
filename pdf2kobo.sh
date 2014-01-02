@@ -30,10 +30,10 @@ process-file()
   CUT_AT=$(echo "${HEIGHT} / 2 * ${OVERLAP}" | bc)
   CUT_AT="${CUT_AT%.*}"
 
-  TMP_FILE_1=$(mktemp)
-  TMP_FILE_2=$(mktemp)
-  TMP_FILE_3=$(mktemp)
-  TMP_FILE_4=$(mktemp)
+  TMP_FILE_1=$(mktemp --suffix=-1)
+  TMP_FILE_2=$(mktemp --suffix=-2)
+  TMP_FILE_3=$(mktemp --suffix=-3)
+  TMP_FILE_4=$(mktemp --suffix=-4)
   OUTPUT_FILE=${INPUT_DIR}/${FILE_NAME_NO_EXT}-kobo.pdf
 
   OPTIONS="-pdf ${CROPBOX_OPTION} -x 0 -y"
