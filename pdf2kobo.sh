@@ -29,6 +29,7 @@ process-file()
   # half of height plus slight overlap
   CUT_AT=$(echo "${HEIGHT} / 2 * ${OVERLAP}" | bc)
   CUT_AT="${CUT_AT%.*}"
+  NB_PAGES=$(pdfinfo ${FILE} | grep Pages | sed 's/  \+/ /g' | cut -d' ' -f2)
 
   TMP_FILE_1=$(mktemp --suffix=-1)
   TMP_FILE_2=$(mktemp --suffix=-2)
@@ -54,10 +55,18 @@ process-file()
   DEBUG echo -e $COMMAND"\n"
   eval $COMMAND
 
+  PAGES=
+  for k in $(seq 1 ${NB_PAGES}); do
+      PAGES+=$TMP_FILE_1;
+      PAGES+=" $k ";
+      PAGES+=$TMP_FILE_2;
+      PAGES+=" $k ";
+  done
+
   # halves assembly
   COMMAND=
-  COMMAND="${COMMAND} pdftk"
-  COMMAND="${COMMAND} A=${TMP_FILE_1} B=${TMP_FILE_2} shuffle A B output ${TMP_FILE_3}"
+  COMMAND="${COMMAND} cpdf"
+  COMMAND="${COMMAND} ${PAGES} -o ${TMP_FILE_3}"
   DEBUG echo -e $COMMAND"\n"
   eval $COMMAND
 
@@ -70,7 +79,7 @@ process-file()
 
   # rotate -90°
   COMMAND=
-  COMMAND="${COMMAND} pdftk A=${TMP_FILE_4} cat AL output ${OUTPUT_FILE}"
+  COMMAND="${COMMAND} cpdf -rotateby 90 ${TMP_FILE_4} -o ${OUTPUT_FILE}"
   DEBUG echo -e $COMMAND"\n"
   eval $COMMAND
 
