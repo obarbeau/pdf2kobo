@@ -79,7 +79,7 @@ process-file()
 
   # rotate -90°
   COMMAND=
-  COMMAND="${COMMAND} cpdf -rotateby 90 ${TMP_FILE_4} -o ${OUTPUT_FILE}"
+  COMMAND="${COMMAND} cpdf -rotateby 270 ${TMP_FILE_4} -o ${OUTPUT_FILE}"
   DEBUG echo -e $COMMAND"\n"
   eval $COMMAND
 
