@@ -70,16 +70,21 @@ process-file()
   DEBUG echo -e $COMMAND"\n"
   eval $COMMAND
 
+# avec l'outil krop, option 'even/odd pages' et commandes 'trim margins'
+# fait sur 1ere page paire et 1ere page impaire
+# puis 'krop'!!!
+
   # crop
   COMMAND=
   COMMAND="${COMMAND} java -jar ${BRISS_HOME}/briss-0.9.jar &>/dev/null"
   COMMAND="${COMMAND} -s ${TMP_FILE_3} -d ${TMP_FILE_4}"
   DEBUG echo -e $COMMAND"\n"
-  eval $COMMAND
+  #eval $COMMAND
 
+# ici c'était tmp4
   # rotate -90°
   COMMAND=
-  COMMAND="${COMMAND} cpdf -rotateby 270 ${TMP_FILE_4} -o ${OUTPUT_FILE}"
+  COMMAND="${COMMAND} cpdf -rotateby 270 ${TMP_FILE_3} -o ${OUTPUT_FILE}"
   DEBUG echo -e $COMMAND"\n"
   eval $COMMAND
 
