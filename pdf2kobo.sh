@@ -31,10 +31,10 @@ process-file()
   CUT_AT="${CUT_AT%.*}"
   NB_PAGES=$(pdfinfo ${FILE} | grep Pages | sed 's/  \+/ /g' | cut -d' ' -f2)
 
-  TMP_FILE_1=$(mktemp --suffix=-1)
-  TMP_FILE_2=$(mktemp --suffix=-2)
-  TMP_FILE_3=$(mktemp --suffix=-3)
-  TMP_FILE_4=$(mktemp --suffix=-4)
+  TMP_FILE_1=$(mktemp --tmpdir=/tmp --suffix=-1 upper-half.XXX)
+  TMP_FILE_2=$(mktemp --tmpdir=/tmp --suffix=-2 lower-half.XXX)
+  TMP_FILE_3=$(mktemp --tmpdir=/tmp --suffix=-3 assembled.XXX)
+  TMP_FILE_4=$(mktemp --tmpdir=/tmp --suffix=-4)
   OUTPUT_FILE=${INPUT_DIR}/${FILE_NAME_NO_EXT}-kobo.pdf
 
   OPTIONS="-pdf ${CROPBOX_OPTION} -x 0 -y"
@@ -70,21 +70,22 @@ process-file()
   DEBUG echo -e $COMMAND"\n"
   eval $COMMAND
 
-# avec l'outil krop, option 'even/odd pages' et commandes 'trim margins'
-# fait sur 1ere page paire et 1ere page impaire
-# puis 'krop'!!!
+# Si briss ne fonctionne pas, et si une variation du OVERLAP non plus,
+# on peut utiliser l'outil krop.
+# réglages: option 'even/odd pages' et commandes 'trim margins'
+# fait sur 1ere page paire et 1ere page impaire (vérifier quand même sur
+# quelques suivantes) puis 'krop'!!!
 
   # crop
   COMMAND=
   COMMAND="${COMMAND} java -jar ${BRISS_HOME}/briss-0.9.jar &>/dev/null"
   COMMAND="${COMMAND} -s ${TMP_FILE_3} -d ${TMP_FILE_4}"
   DEBUG echo -e $COMMAND"\n"
-  #eval $COMMAND
+  eval $COMMAND
 
-# ici c'était tmp4
   # rotate -90°
   COMMAND=
-  COMMAND="${COMMAND} cpdf -rotateby 270 ${TMP_FILE_3} -o ${OUTPUT_FILE}"
+  COMMAND="${COMMAND} cpdf -rotateby 270 ${TMP_FILE_4} -o ${OUTPUT_FILE}"
   DEBUG echo -e $COMMAND"\n"
   eval $COMMAND
 
