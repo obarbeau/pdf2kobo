@@ -1,24 +1,22 @@
 #!/bin/bash
 set +e
+set +x
 
 BRISS_HOME=/usr/local/src/briss-0.9
 DEBUG=false
 OVERLAP="0.97"
 #CROPBOX_OPTION="-cropbox"
 
-function DEBUG()
-{
+DEBUG() {
   [ "${DEBUG}" == "true" ] &&  $@
 }
 
-usage()
-{
+usage() {
   echo "Usage: $0 PDF-file-to-convert" >&2
   exit 1
 }
 
-process-file()
-{
+processfile() {
 
   FILE="${1}"
   INPUT_DIR="$(dirname ${FILE})"
@@ -101,4 +99,4 @@ if [ ! -d "${BRISS_HOME}" ]; then
   exit 1
 fi
 
-process-file $1
+processfile "$1"
