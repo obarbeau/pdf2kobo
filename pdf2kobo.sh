@@ -2,13 +2,13 @@
 set +e
 set +x
 
-BRISS_HOME=/usr/local/src/briss-0.9
+BRISS_HOME=/opt/briss-0.9
 DEBUG=false
 OVERLAP="0.97"
 #CROPBOX_OPTION="-cropbox"
 
 DEBUG() {
-  [ "${DEBUG}" == "true" ] &&  $@
+  [ "${DEBUG}" == "true" ] && $@
 }
 
 usage() {
@@ -28,11 +28,12 @@ processfile() {
   CUT_AT=$(echo "${HEIGHT} / 2 * ${OVERLAP}" | bc)
   CUT_AT="${CUT_AT%.*}"
   NB_PAGES=$(pdfinfo ${FILE} | grep Pages | sed 's/  \+/ /g' | cut -d' ' -f2)
+  TMP_DIR=$(mktemp -p /tmp -d pdf2kobo.XXX)
 
-  TMP_FILE_1=$(mktemp --tmpdir=/tmp --suffix=-1 upper-half.XXX)
-  TMP_FILE_2=$(mktemp --tmpdir=/tmp --suffix=-2 lower-half.XXX)
-  TMP_FILE_3=$(mktemp --tmpdir=/tmp --suffix=-3 assembled.XXX)
-  TMP_FILE_4=$(mktemp --tmpdir=/tmp --suffix=-4)
+  TMP_FILE_1=$(mktemp --tmpdir=$TMP_DIR --suffix=-1 upper-half.XXX)
+  TMP_FILE_2=$(mktemp --tmpdir=$TMP_DIR --suffix=-2 lower-half.XXX)
+  TMP_FILE_3=$(mktemp --tmpdir=$TMP_DIR --suffix=-3 assembled.XXX)
+  TMP_FILE_4=$(mktemp --tmpdir=$TMP_DIR --suffix=-4)
   OUTPUT_FILE=${INPUT_DIR}/${FILE_NAME_NO_EXT}-kobo.pdf
 
   OPTIONS="-pdf ${CROPBOX_OPTION} -x 0 -y"
@@ -55,24 +56,24 @@ processfile() {
 
   PAGES=
   for k in $(seq 1 ${NB_PAGES}); do
-      PAGES+=$TMP_FILE_1;
-      PAGES+=" $k ";
-      PAGES+=$TMP_FILE_2;
-      PAGES+=" $k ";
+    PAGES+="A"
+    PAGES+="$k "
+    PAGES+="B"
+    PAGES+="$k "
   done
 
   # halves assembly
   COMMAND=
-  COMMAND="${COMMAND} cpdf"
-  COMMAND="${COMMAND} ${PAGES} -o ${TMP_FILE_3}"
+  COMMAND="${COMMAND} pdftk A=$TMP_FILE_1 B=$TMP_FILE_2 cat"
+  COMMAND="${COMMAND} ${PAGES} output ${TMP_FILE_3}"
   DEBUG echo -e $COMMAND"\n"
   eval $COMMAND
 
-# Si briss ne fonctionne pas, et si une variation du OVERLAP non plus,
-# on peut utiliser l'outil krop.
-# réglages: option 'even/odd pages' et commandes 'trim margins'
-# fait sur 1ere page paire et 1ere page impaire (vérifier quand même sur
-# quelques suivantes) puis 'krop'!!!
+  # If briss doesn't work, and neither does an OVERLAP variation,
+  # use the krop tool.
+  # settings: 'even/odd pages' option and 'trim margins' commands
+  # done on 1st even page and 1st odd page (check anyway on
+  # some of the following pages), then 'krop'!
 
   # crop
   COMMAND=
@@ -83,7 +84,7 @@ processfile() {
 
   # rotate -90°
   COMMAND=
-  COMMAND="${COMMAND} cpdf -rotateby 270 ${TMP_FILE_4} -o ${OUTPUT_FILE}"
+  COMMAND="${COMMAND} pdftk ${TMP_FILE_4} cat 1-endwest output ${OUTPUT_FILE}"
   DEBUG echo -e $COMMAND"\n"
   eval $COMMAND
 
@@ -91,7 +92,7 @@ processfile() {
 }
 
 if [ "$#" -ne 1 ]; then
-  usage;
+  usage
 fi
 
 if [ ! -d "${BRISS_HOME}" ]; then
